@@ -9,6 +9,8 @@ defmodule CatFeeder do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(CatFeeder.Worker, [arg1, arg2, arg3]),
+      worker(CatFeeder.ProximityWorker, [name: :prox]),
+      worker(CatFeeder.ServoWorker, [name: :servo]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

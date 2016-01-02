@@ -1,13 +1,13 @@
 defmodule CatFeeder.ServoWorker do
   use GenServer
 
-  # Server (callbacks)
+  # Client 
 
   def start_link(default) do
     GenServer.start_link(__MODULE__, default)
   end
 
-  # Client
+  # Server Callbacks 
 
 
 
