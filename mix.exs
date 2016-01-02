@@ -28,6 +28,8 @@ defmodule CatFeeder.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:elixir_ale, "~> 0.4.1"},
+    ]
   end
 end
