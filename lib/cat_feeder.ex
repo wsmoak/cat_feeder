@@ -9,6 +9,7 @@ defmodule CatFeeder do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(CatFeeder.Worker, [arg1, arg2, arg3]),
+      worker(I2c, ["i2c-1", 0x13, [name: ProximitySensor]]),
       worker(CatFeeder.ProximityWorker, []),
 #      worker(CatFeeder.ServoWorker, []),
     ]

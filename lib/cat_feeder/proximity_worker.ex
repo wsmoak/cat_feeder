@@ -10,24 +10,29 @@ defmodule CatFeeder.ProximityWorker do
   # Client
 
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: Proximity)
+    GenServer.start_link(__MODULE__, [], name: ProximityChecker)
   end
 
   # Server Callbacks 
 
   def init(_opts) do
 
-    {:ok,pid} = I2c.start_link("i2c-1", 0x13)
     # turn on proximity sensing by setting bits 0 and 1
+    pid = Process.whereis( ProximitySensor )
     I2c.write(pid, <<@cmd, 0x03>> )
     
     # start it up! wait a bit so the process exists.
-    Process.send_after(Proximity, :check_it, 1000)
+    Process.send_after(ProximityChecker, :check_it, 1000)
 
-    Logger.debug( "right after the Process.send_after" )
+    {:ok, %{:status => :idle}}
 
-    {:ok, %{:status => :idle, :prox_pid => pid}}
+  end
 
+  def terminate(reason, _state) do
+    Logger.debug "Received call to terminate for #{reason}"
+    pid = Process.whereis(ProximitySensor)
+    # turn off proximity sensing 
+    I2c.write(pid, <<@cmd, 0x00>> )
   end
 
   def handle_info(:check_it, state = %{:status => :waiting} ) do
@@ -38,13 +43,15 @@ defmodule CatFeeder.ProximityWorker do
     # we have to get the official :time_is_up message before we 
     # change state
     Logger.debug "it's not time yet!"
+    # TODO: sanity check and reset if we've been waiting too long
+    # Store the last trigger time in the state?
     {:noreply, state}
   end
 
   # the official timer ended, so change the state
   def handle_info(:time_is_up, state) do
-    Process.send_after(Proximity, :check_it, 513)
-    {:noreply, Map.update!(state, :status, fn x -> :idle end) }
+    Process.send_after(ProximityChecker, :check_it, 513)
+    {:noreply, Map.update!(state, :status, fn _x -> :idle end) }
   end
 
   # this is a 'custom message' in handle_info 
@@ -52,16 +59,16 @@ defmodule CatFeeder.ProximityWorker do
     IO.write "state in :check_it handle_info w/ pattern match is "
     IO.inspect state
 
-    val = check_proximity( state[:prox_pid] )
+    val = check_proximity 
 
     if val > 2100 do
       Logger.debug "FEED THE CAT!"
       # spin the servo
       # wait "20 minutes" (or 10 seconds for now)
-      Process.send_after(Proximity, :time_is_up, 10000)
+      Process.send_after(ProximityChecker, :time_is_up, 10000)
       {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
     else
-      Process.send_after(Proximity, :check_it, 513)
+      Process.send_after(ProximityChecker, :check_it, 513)
       {:noreply, Map.update!(state, :status, fn x -> :idle end) }
     end 
   end
@@ -76,7 +83,8 @@ defmodule CatFeeder.ProximityWorker do
 
   # Helper Functions
 
-  def check_proximity(pid) do
+  def check_proximity do
+    pid = Process.whereis(ProximitySensor)
     << val :: 16 >> = I2c.write_read(pid,<<@prox_result_h>> ,2) 
     Logger.debug "Proximity value #{val}" 
     val 
