@@ -10,7 +10,7 @@ defmodule CatFeeder.ProximityWorker do
   # Client
 
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: :prox)
+    GenServer.start_link(__MODULE__, [], name: Proximity)
   end
 
   # Server Callbacks 
@@ -20,17 +20,58 @@ defmodule CatFeeder.ProximityWorker do
     {:ok,pid} = I2c.start_link("i2c-1", 0x13)
     # turn on proximity sensing by setting bits 0 and 1
     I2c.write(pid, <<@cmd, 0x03>> )
+    
+    # start it up! wait a bit so the process exists.
+    Process.send_after(Proximity, :check_it, 1000)
 
-    Task.async( __MODULE__, :check_proximity, [pid] )
+    Logger.debug( "right after the Process.send_after" )
 
-    {:ok, %{state: :idle}}
+    {:ok, %{:status => :idle, :prox_pid => pid}}
 
   end
 
-  def handle_call(request, from, state) do
-    IO.write "state in handle_call is "
+  def handle_info(:check_it, state = %{:status => :waiting} ) do
+    IO.write "state in :check_it handle_info w/ :waiting pattern match is "
+    IO.inspect state
+    # we've received a request to check the proximity
+    # but we're still waiting ... 
+    # we have to get the official :time_is_up message before we 
+    # change state
+    Logger.debug "it's not time yet!"
+    {:noreply, state}
+  end
+
+  # the official timer ended, so change the state
+  def handle_info(:time_is_up, state) do
+    Process.send_after(Proximity, :check_it, 513)
+    {:noreply, Map.update!(state, :status, fn x -> :idle end) }
+  end
+
+  # this is a 'custom message' in handle_info 
+  def handle_info(:check_it, state) do
+    IO.write "state in :check_it handle_info w/ pattern match is "
     IO.inspect state
 
+    val = check_proximity( state[:prox_pid] )
+
+    if val > 2100 do
+      Logger.debug "FEED THE CAT!"
+      # spin the servo
+      # wait "20 minutes" (or 10 seconds for now)
+      Process.send_after(Proximity, :time_is_up, 10000)
+      {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
+    else
+      Process.send_after(Proximity, :check_it, 513)
+      {:noreply, Map.update!(state, :status, fn x -> :idle end) }
+    end 
+  end
+
+  def handle_info(msg, state) do
+    IO.write "in generic handle_info, msg is "
+    IO.inspect msg
+    IO.write " ... and state is "
+    IO.inspect state 
+    {:noreply, state}
   end
 
   # Helper Functions
@@ -38,17 +79,7 @@ defmodule CatFeeder.ProximityWorker do
   def check_proximity(pid) do
     << val :: 16 >> = I2c.write_read(pid,<<@prox_result_h>> ,2) 
     Logger.debug "Proximity value #{val}" 
- 
-    # value determined by running measure/1 and observing the output
-    if val > 2100 do
-      Logger.debug "Sending message to feed the cat!"  
-      #Gpio.write(led_pid,1)
-      {:ok, %{state: :waiting}}
-    else
-      Logger.debug "nobody around..."
-      #Gpio.write(led_pid,0)
-      {:ok, %{state: :idle}}
-    end
+    val 
   end
 
 end
