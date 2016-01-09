@@ -9,9 +9,10 @@ defmodule CatFeeder do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(CatFeeder.Worker, [arg1, arg2, arg3]),
-      worker(I2c, ["i2c-1", 0x13, [name: ProximitySensor]]),
+      worker(I2c, ["i2c-1", 0x13, [name: ProximitySensor]], id: "prox"),
       worker(CatFeeder.ProximityWorker, []),
-#      worker(CatFeeder.ServoWorker, []),
+      worker(I2c, ["i2c-1", 0x40, [name: Servo]], id: "serv"),
+      worker(CatFeeder.ServoWorker, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
