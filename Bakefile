@@ -1,0 +1,6 @@
+use Bake.Config
+
+platform :nerves
+
+target :rpi2,
+  recipe: "nerves/rpi2"
