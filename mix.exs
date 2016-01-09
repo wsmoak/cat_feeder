@@ -14,7 +14,7 @@ defmodule CatFeeder.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :elixir_ale],
      mod: {CatFeeder, []}]
   end
 
@@ -30,6 +30,7 @@ defmodule CatFeeder.Mixfile do
   defp deps do
     [
       {:elixir_ale, "~> 0.4.1"},
+      {:exrm, "~> 1.0.0-rc7"},
     ]
   end
 end
