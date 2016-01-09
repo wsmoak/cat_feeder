@@ -64,6 +64,8 @@ defmodule CatFeeder.ProximityWorker do
     if val > 2100 do
       Logger.debug "FEED THE CAT!"
       # spin the servo
+      pid = Process.whereis( ServoSpinner )
+      Process.send(pid, :bump, [])
       # wait "20 minutes" (or 10 seconds for now)
       Process.send_after(ProximityChecker, :time_is_up, 10000)
       {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
