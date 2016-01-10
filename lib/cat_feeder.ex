@@ -15,6 +15,8 @@ defmodule CatFeeder do
       worker(CatFeeder.ServoWorker, []),
     ]
 
+    {:ok, _} = Nerves.IO.Ethernet.setup :eth0
+
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: CatFeeder.Supervisor]
