@@ -1,4 +1,4 @@
-defmodule CatFeeder.ServoWorker do
+defmodule CatFeeder.StepperWorker do
   require Logger
   use Bitwise 
   use GenServer
@@ -21,29 +21,36 @@ defmodule CatFeeder.ServoWorker do
   @outdrv 0x04
   @swrst 0x06
 
+  @pwma 8
+  @ain2 9
+  @ain1 10
+  @pwmb 13
+  @bin2 12
+  @bin1 11
+
   # Client
 
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: ServoSpinner)
+    GenServer.start_link(__MODULE__, [], name: StepperTurner)
   end
 
   # Server Callbacks
 
   def init(_opts) do
     Logger.debug "Initializing..."
-    pid = Process.whereis( Servo )
+    pid = Process.whereis( Stepper )
     
     set_all_pwm(pid,0,0) 
     I2c.write(pid, <<@mode2, @outdrv>>) # external driver, see docs
     I2c.write(pid, <<@mode1, @allcall>>) # program all PCA9685's at once
     :timer.sleep 5 
-    prescale(pid, 60) # set pwm to 60 Hz 
+    prescale(pid, 1600) # set pwm to 1600 Hz 
 
     {:ok, :nostate}
   end
 
   def handle_info(:bump, state) do
-    pid = Process.whereis( Servo )
+    pid = Process.whereis( Stepper )
     bump(pid)
     {:noreply, state}
   end 
@@ -74,30 +81,45 @@ defmodule CatFeeder.ServoWorker do
 
   end
  
-  # spin one way
-  def min(pid) do
-    Logger.debug "min"
-    set_pwm(pid, 0, 0, 0x0096)
-  end
- 
-  # spin the other way  
-  def max(pid) do
-    Logger.debug "max"
-    set_pwm(pid, 0, 0, 0x0258)
-  end
- 
-  # stop 
-  def mid(pid) do
-    Logger.debug "mid"
-    set_pwm(pid, 0, 0, 0)
-  end
-
   # spins just a bit in one direction and stops
   def bump(pid) do
     Logger.debug "bump"
-    min(pid)
-    :timer.sleep 200
-    mid(pid)
+    set_pwm(pid,@pwma,0,0x0FF0)
+    set_pwm(pid,@pwmb,0,0x0FF0) 
+
+    set_pin(pid,@ain2,1)
+    set_pin(pid,@bin1,0) 
+    set_pin(pid,@ain1,0) 
+    set_pin(pid,@bin2,0)
+    :timer.sleep 100 
+    set_pin(pid,@ain2,0)
+    set_pin(pid,@bin1,1) 
+    set_pin(pid,@ain1,0) 
+    set_pin(pid,@bin2,0)
+    :timer.sleep 100 
+    set_pin(pid,@ain2,0)
+    set_pin(pid,@bin1,0) 
+    set_pin(pid,@ain1,1) 
+    set_pin(pid,@bin2,0)
+    :timer.sleep 100 
+    set_pin(pid,@ain2,0)
+    set_pin(pid,@bin1,0) 
+    set_pin(pid,@ain1,0) 
+    set_pin(pid,@bin2,1)
+    Logger.debug "stopping..." 
+    set_pin(pid,@ain2,0)
+    set_pin(pid,@bin1,0) 
+    set_pin(pid,@ain1,0) 
+    set_pin(pid,@bin2,0)
+    Logger.debug "done turning"
+ end
+
+  def set_pin(pid,channel,0) do
+    set_pwm(pid,channel,0,0x1000)
+  end
+
+  def set_pin(pid,channel,1) do
+    set_pwm(pid,channel,0x1000,0)
   end
 
   # The registers for each of the 16 channels are sequential

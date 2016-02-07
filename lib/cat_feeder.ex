@@ -11,8 +11,8 @@ defmodule CatFeeder do
       # worker(CatFeeder.Worker, [arg1, arg2, arg3]),
       worker(I2c, ["i2c-1", 0x13, [name: ProximitySensor]], id: "prox"),
       worker(CatFeeder.ProximityWorker, []),
-#      worker(I2c, ["i2c-1", 0x40, [name: Servo]], id: "serv"),
-#      worker(CatFeeder.ServoWorker, []),
+      worker(I2c, ["i2c-1", 0x60, [name: Stepper]], id: "step"),
+      worker(CatFeeder.StepperWorker, []),
     ]
 
     # {:ok, _} = Nerves.IO.Ethernet.setup :eth0
