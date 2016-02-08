@@ -87,17 +87,25 @@ defmodule CatFeeder.StepperWorker do
     set_pwm(pid,@pwma,0,0x0FF0)
     set_pwm(pid,@pwmb,0,0x0FF0) 
 
-    set_pins(pid,1,0,0,0)
+    turn(pid,0)
+  end
+
+  def turn(pid,count) when count < 15 do
+    Logger.debug "turning #{count}"
+    set_pins(pid,1,1,0,0)
+    :timer.sleep 100
+    set_pins(pid,0,1,1,0)
     :timer.sleep 100 
-    set_pins(pid,0,1,0,0)
+    set_pins(pid,0,0,1,1)
     :timer.sleep 100 
-    set_pins(pid,0,0,1,0)
-    :timer.sleep 100 
-    set_pins(pid,0,0,0,1)
-    Logger.debug "stopping..." 
-    set_pins(pid,0,0,0,0)
-    Logger.debug "done turning"
- end
+    set_pins(pid,1,0,0,1)
+    turn(pid,count+1)
+  end
+
+  def turn(pid,count) when count >= 15 do
+    Logger.debug "stopping..."
+    set_pins(pid,0,0,0,0) 
+  end
 
   def set_pins(pid,ain2,bin1,ain1,bin2) do
     set_pin(pid,@ain2,ain2)
