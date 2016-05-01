@@ -2,6 +2,9 @@ defmodule CatFeeder.ProximityWorker do
   require Logger
   use GenServer
 
+# wait in minutes * seconds * milliseconds
+  @wait           1200000 
+
 # register        address
   @cmd            0x80
   @prox_result_h  0x87
@@ -66,8 +69,8 @@ defmodule CatFeeder.ProximityWorker do
       # spin the servo
       pid = Process.whereis( StepperTurner )
       Process.send(pid, :bump, [])
-      # wait "20 minutes" (or 10 seconds for now)
-      Process.send_after(ProximityChecker, :time_is_up, 10000)
+      # wait before feeding again
+      Process.send_after(ProximityChecker, :time_is_up, @wait)
       {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
     else
       Process.send_after(ProximityChecker, :check_it, 513)
