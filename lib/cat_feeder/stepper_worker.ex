@@ -3,6 +3,8 @@ defmodule CatFeeder.StepperWorker do
   use Bitwise 
   use GenServer
   
+  @turns      16
+
   @mode1      0x00 # bit 4 is SLEEP 000X0000
   @mode2      0x01
   @prescale   0xFE
@@ -90,7 +92,7 @@ defmodule CatFeeder.StepperWorker do
     turn(pid,0)
   end
 
-  def turn(pid,count) when count < 15 do
+  def turn(pid,count) when count < @turns do
     Logger.debug "turning #{count}"
     set_pins(pid,1,1,0,0)
     :timer.sleep 100
@@ -102,7 +104,7 @@ defmodule CatFeeder.StepperWorker do
     turn(pid,count+1)
   end
 
-  def turn(pid,count) when count >= 15 do
+  def turn(pid,count) when count >= @turns do
     Logger.debug "stopping..."
     set_pins(pid,0,0,0,0) 
   end
