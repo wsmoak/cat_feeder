@@ -2,6 +2,9 @@ defmodule CatFeeder.ProximityWorker do
   require Logger
   use GenServer
 
+# 10:00 AM to 5:59 PM
+@ active_hours 10..17
+
 # wait in minutes * seconds * milliseconds
   @wait           1200000 
 
@@ -63,8 +66,9 @@ defmodule CatFeeder.ProximityWorker do
     IO.inspect state
 
     val = check_proximity 
+    hour = Timex.DateTime.now("America/New_York").hour
 
-    if val > 2100 do
+    if val > 2100 and hour in @active_hours do
       Logger.debug "FEED THE CAT!"
       # spin the servo
       pid = Process.whereis( StepperTurner )
