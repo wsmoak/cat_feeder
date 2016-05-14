@@ -1,7 +1,17 @@
 %{"bbmustache": {:hex, :bbmustache, "1.0.3"},
+  "certifi": {:hex, :certifi, "0.4.0"},
+  "combine": {:hex, :combine, "0.7.0"},
   "elixir_ale": {:hex, :elixir_ale, "0.4.1"},
   "erlware_commons": {:hex, :erlware_commons, "0.15.0"},
   "exrm": {:hex, :exrm, "1.0.0-rc7"},
   "getopt": {:hex, :getopt, "0.8.2"},
+  "gettext": {:hex, :gettext, "0.11.0"},
+  "hackney": {:hex, :hackney, "1.6.0"},
+  "idna": {:hex, :idna, "1.2.0"},
+  "metrics": {:hex, :metrics, "1.0.1"},
+  "mimerl": {:hex, :mimerl, "1.0.2"},
   "providers": {:hex, :providers, "1.4.1"},
-  "relx": {:hex, :relx, "3.5.0"}}
+  "relx": {:hex, :relx, "3.5.0"},
+  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0"},
+  "timex": {:hex, :timex, "2.1.4"},
+  "tzdata": {:hex, :tzdata, "0.5.7"}}

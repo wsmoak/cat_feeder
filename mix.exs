@@ -15,6 +15,7 @@ defmodule CatFeeder.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger, :elixir_ale,
+      :timex,
       # :nerves_io_ethernet,
       ],
      mod: {CatFeeder, []}]
@@ -33,6 +34,7 @@ defmodule CatFeeder.Mixfile do
     [
       {:elixir_ale, "~> 0.4.1"},
       {:exrm, "~> 1.0.0-rc7"},
+      {:timex, "~> 2.1.4"},
       # {:nerves_io_ethernet, github: "nerves-project/nerves_io_ethernet"},
     ]
   end
