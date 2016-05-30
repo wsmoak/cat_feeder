@@ -2,11 +2,11 @@ defmodule CatFeeder.ProximityWorker do
   require Logger
   use GenServer
 
-# 10:00 AM to 5:59 PM
-@ active_hours 10..17
+# Always on while sorting out WiFi with Nerves
+@ active_hours 0..23
 
 # wait in minutes * seconds * milliseconds
-  @wait           1200000 
+  @wait           1200000
 
 # register        address
   @cmd            0x80
@@ -19,14 +19,14 @@ defmodule CatFeeder.ProximityWorker do
     GenServer.start_link(__MODULE__, [], name: ProximityChecker)
   end
 
-  # Server Callbacks 
+  # Server Callbacks
 
   def init(_opts) do
 
     # turn on proximity sensing by setting bits 0 and 1
     pid = Process.whereis( ProximitySensor )
     I2c.write(pid, <<@cmd, 0x03>> )
-    
+
     # start it up! wait a bit so the process exists.
     Process.send_after(ProximityChecker, :check_it, 1000)
 
@@ -37,7 +37,7 @@ defmodule CatFeeder.ProximityWorker do
   def terminate(reason, _state) do
     Logger.debug "Received call to terminate for #{reason}"
     pid = Process.whereis(ProximitySensor)
-    # turn off proximity sensing 
+    # turn off proximity sensing
     I2c.write(pid, <<@cmd, 0x00>> )
   end
 
@@ -45,8 +45,8 @@ defmodule CatFeeder.ProximityWorker do
     IO.write "state in :check_it handle_info w/ :waiting pattern match is "
     IO.inspect state
     # we've received a request to check the proximity
-    # but we're still waiting ... 
-    # we have to get the official :time_is_up message before we 
+    # but we're still waiting ...
+    # we have to get the official :time_is_up message before we
     # change state
     Logger.debug "it's not time yet!"
     # TODO: sanity check and reset if we've been waiting too long
@@ -60,12 +60,12 @@ defmodule CatFeeder.ProximityWorker do
     {:noreply, Map.update!(state, :status, fn _x -> :idle end) }
   end
 
-  # this is a 'custom message' in handle_info 
+  # this is a 'custom message' in handle_info
   def handle_info(:check_it, state) do
     IO.write "state in :check_it handle_info w/ pattern match is "
     IO.inspect state
 
-    val = check_proximity 
+    val = check_proximity
     hour = Timex.DateTime.now("America/New_York").hour
 
     if val > 2100 and hour in @active_hours do
@@ -79,14 +79,14 @@ defmodule CatFeeder.ProximityWorker do
     else
       Process.send_after(ProximityChecker, :check_it, 513)
       {:noreply, Map.update!(state, :status, fn x -> :idle end) }
-    end 
+    end
   end
 
   def handle_info(msg, state) do
     IO.write "in generic handle_info, msg is "
     IO.inspect msg
     IO.write " ... and state is "
-    IO.inspect state 
+    IO.inspect state
     {:noreply, state}
   end
 
@@ -94,9 +94,9 @@ defmodule CatFeeder.ProximityWorker do
 
   def check_proximity do
     pid = Process.whereis(ProximitySensor)
-    << val :: 16 >> = I2c.write_read(pid,<<@prox_result_h>> ,2) 
-    Logger.debug "Proximity value #{val}" 
-    val 
+    << val :: 16 >> = I2c.write_read(pid,<<@prox_result_h>> ,2)
+    Logger.debug "Proximity value #{val}"
+    val
   end
 
 end
