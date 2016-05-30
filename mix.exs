@@ -50,7 +50,7 @@ defmodule CatFeeder.Mixfile do
       {:elixir_ale, "~> 0.4.1"},
       {:exrm, "~> 1.0.5"},
       {:timex, "~> 2.1.4"},
-      {:nerves, "~> 0.3.0"},
+      {:nerves, "~> 0.3"},
     ]
   end
 
