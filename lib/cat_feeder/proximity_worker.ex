@@ -12,6 +12,11 @@ defmodule CatFeeder.ProximityWorker do
   @cmd            0x80
   @prox_result_h  0x87
   @prox_result_l  0x88
+  @int_ctrl       0x89
+  @low_thresh_h   0x8A
+  @low_thresh_l   0x8B
+  @high_thresh_h  0x8C 
+  @high_thresh_l  0x8D
 
   # Client
 
@@ -23,13 +28,28 @@ defmodule CatFeeder.ProximityWorker do
 
   def init(_opts) do
 
-    # turn on proximity sensing by setting bits 0 and 1
     pid = Process.whereis( ProximitySensor )
-    I2c.write(pid, <<@cmd, 0x03>> )
     
-    # start it up! wait a bit so the process exists.
-    Process.send_after(ProximityChecker, :check_it, 1000)
+    # make sure periodic measurements are turned off
+    I2c.write(pid, <<@cmd, 0x00>> )
 
+    # set the low threshold 
+
+    # set the high threshold, 2100 is 0x834
+    I2c.write(pid, <<@high_thresh_h, 0x08 >> )
+    I2c.write(pid, <<@high_thresh_l, 0x34 >> )
+
+    # configure the chip to interrupt
+    I2c.write(pid, <<@int_ctrl, 0x02 >>)  # 0000 0010
+
+    # start it up! wait a bit so the process exists.
+    #Process.send_after(ProximityChecker, :check_it, 1000)
+    # we'll wait for the interrupt instead of checking...
+
+    # instead of a separate file let's try it here...
+    int_pid = Process.whereis( InterruptPin )
+    Gpio.set_int(int_pid, :both)   
+ 
     {:ok, %{:status => :idle}}
 
   end
