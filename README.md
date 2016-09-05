@@ -1,20 +1,13 @@
 # CatFeeder
 
-**TODO: Add description**
+Elixir code for a cat feeder that receives interrupts from a proximity sensor and triggers a stepper motor to turn an augur to deliver a small amount of food. It then waits 20 minutes before it can be activated again.
 
-## Installation
+See related blog posts on <http://wsmoak.net>
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+The proximity sensor is a VCNL4010 from Adafruit
+<https://www.adafruit.com/product/466>
+<https://cdn-shop.adafruit.com/product-files/466/vcnl4010.pdf>
 
-  1. Add cat_feeder to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:cat_feeder, "~> 0.0.1"}]
-        end
-
-  2. Ensure cat_feeder is started before your application:
-
-        def application do
-          [applications: [:cat_feeder]]
-        end
-
+The stepper motor is controlled by a PCA9685 (among other things) on the Adafruit Stepper Motor HAT
+<https://www.adafruit.com/products/2348>
+<http://www.adafruit.com/datasheets/PCA9685.pdf>
