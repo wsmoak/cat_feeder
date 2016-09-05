@@ -2,12 +2,12 @@ defmodule CatFeeder.ProximityWorker do
   require Logger
   use GenServer
 
-# 10:00 AM to 5:59 PM
-@ active_hours 10..17
+# 10:00 AM to 7:59 PM
+@ active_hours 10..19
 
 # wait in minutes * seconds * milliseconds
   @wait           1200000 
-
+ 
 # register        address
   @cmd            0x80
   @prox_result_h  0x87
@@ -31,34 +31,26 @@ defmodule CatFeeder.ProximityWorker do
 
     pid = Process.whereis( ProximitySensor )
     
-    # make sure periodic measurements are turned off
-    I2c.write(pid, <<@cmd, 0x00>> )
+    # set bits 0 and 1 to turn on periodic proximity measurements 
+    I2c.write(pid, <<@cmd, 0x03>> )
 
     # set the low threshold 
     I2c.write(pid, <<@low_thresh_h, 0x00>> )
     I2c.write(pid, <<@low_thresh_l, 0x00>> )
 
     # set the high threshold, 2100 is 0x834
-    I2c.write(pid, <<@high_thresh_h, 0x00 >> )
-    I2c.write(pid, <<@high_thresh_l, 0x99 >> )
+    I2c.write(pid, <<@high_thresh_h, 0x08 >> )
+    I2c.write(pid, <<@high_thresh_l, 0x34 >> )
 
-    # configure the chip to interrupt
+    # configure the chip to interrupt when threshold is exceeded
     I2c.write(pid, <<@int_ctrl, 0x02 >>)  # 0000 0010
 
-    # start it up! wait a bit so the process exists.
-    #Process.send_after(ProximityChecker, :check_it, 1000)
-    # we'll wait for the interrupt instead of checking...
-
-    # instead of a separate file let's try it here...
+    # tell elixir_ale we're looking for the pin to be pulled low 
     int_pid = Process.whereis( InterruptPin )
-    Gpio.set_int(int_pid, :both)   
+    Gpio.set_int(int_pid, :falling)   
 
-#    val = Gpio.read(int_pid)
-#    Logger.debug "GPIO pin 18's value is... #{val}" 
-     check_interrupt_status
-
+    # set the initial state
     {:ok, %{:status => :idle}}
-
   end
 
   def terminate(reason, _state) do
@@ -68,44 +60,29 @@ defmodule CatFeeder.ProximityWorker do
     I2c.write(pid, <<@cmd, 0x00>> )
   end
 
-  def handle_info(:check_it, state = %{:status => :waiting} ) do
-    IO.write "state in :check_it handle_info w/ :waiting pattern match is "
-    IO.inspect state
-    # we've received a request to check the proximity
-    # but we're still waiting ... 
-    # we have to get the official :time_is_up message before we 
-    # change state
-    Logger.debug "it's not time yet!"
-    # TODO: sanity check and reset if we've been waiting too long
-    # Store the last trigger time in the state?
-    {:noreply, state}
-  end
-
   # the official timer ended, so change the state
   def handle_info(:time_is_up, state) do
-    Process.send_after(ProximityChecker, :check_it, 513)
+    Logger.debug "Time is up! Ready to feed again"
     {:noreply, Map.update!(state, :status, fn _x -> :idle end) }
   end
 
-  # this is a 'custom message' in handle_info 
-  def handle_info(:check_it, state) do
-    IO.write "state in :check_it handle_info w/ pattern match is "
-    IO.inspect state
+  def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :waiting}) do
+    Logger.debug "Interrupted, but still waiting"
+    clear_interrupt_status
+    {:noreply, state}
+  end
 
-    val = check_proximity 
+  def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :idle} ) do
     hour = Timex.DateTime.now("America/New_York").hour
-
-    if val > 2100 and hour in @active_hours do
+    if hour in @active_hours do
       Logger.debug "FEED THE CAT!"
-      # spin the servo
+      # turn the motor 
       pid = Process.whereis( StepperTurner )
       Process.send(pid, :bump, [])
       # wait before feeding again
       Process.send_after(ProximityChecker, :time_is_up, @wait)
+      clear_interrupt_status 
       {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
-    else
-      Process.send_after(ProximityChecker, :check_it, 513)
-      {:noreply, Map.update!(state, :status, fn x -> :idle end) }
     end 
   end
 
@@ -126,10 +103,20 @@ defmodule CatFeeder.ProximityWorker do
     val 
   end
 
-
   def check_interrupt_status do
     pid = Process.whereis(ProximitySensor)
     << val :: 8 >> = I2c.write_read(pid, <<@int_status>>, 1) 
+    IO.inspect(val, base: :hex)
     Logger.debug "Interrupt Status #{val}"
+  end
+
+  def clear_interrupt_status do
+    pid = Process.whereis(ProximitySensor)
+    << val :: 8 >> = I2c.write_read(pid, <<@int_status>>, 1)
+    # if any of the bits are set, clear them by writing a 1 back to them 
+    if val > 0 do
+      Logger.debug "Clearing interrupt status, was #{val}"
+      I2c.write(pid, <<@int_status, val >> )
+    end 
   end
 end
