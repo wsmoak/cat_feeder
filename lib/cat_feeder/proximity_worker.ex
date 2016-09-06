@@ -83,6 +83,9 @@ defmodule CatFeeder.ProximityWorker do
       Process.send_after(ProximityChecker, :time_is_up, @wait)
       clear_interrupt_status
       {:noreply, Map.update!(state, :status, fn x -> :waiting end) }
+    else
+      Logger.debug "Outside of allowed hours, not feeding"
+      {:noreply, state}
     end
   end
 
