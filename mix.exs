@@ -7,7 +7,7 @@ defmodule CatFeeder.Mixfile do
     [app: :cat_feeder,
      version: "0.0.1",
      target: @target,
-     archives: [nerves_bootstrap: "0.1.2"],
+     archives: [nerves_bootstrap: "0.1.4"],
      deps_path: "deps/#{@target}",
      build_path: "_build/#{@target}",
      build_embedded: Mix.env == :prod,
