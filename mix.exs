@@ -28,6 +28,7 @@ defmodule CatFeeder.Mixfile do
       :httpoison,
       :nerves_system_br,
       :porcelain,
+      :persistent_storage,
       :nerves_toolchain,
       :nerves_system,
       :nerves_toolchain_arm_unknown_linux_gnueabihf,
@@ -51,6 +52,7 @@ defmodule CatFeeder.Mixfile do
       {:exrm, "~> 1.0.5"},
       {:timex, "~> 2.1.4"},
       {:nerves, "~> 0.3"},
+      {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"}
     ]
   end
 

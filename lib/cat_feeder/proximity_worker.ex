@@ -29,6 +29,9 @@ defmodule CatFeeder.ProximityWorker do
 
   def init(_opts) do
 
+    Logger.debug "Configuring persistent storage"
+    :ok = PersistentStorage.setup path: "/root/storage"
+
     pid = Process.whereis( ProximitySensor )
 
     # set bits 0 and 1 to turn on periodic proximity measurements
@@ -67,15 +70,17 @@ defmodule CatFeeder.ProximityWorker do
   end
 
   def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :waiting}) do
-    Logger.debug "Interrupted, but still waiting"
+    time = PersistentStorage.get :last_fed_at
+    Logger.debug "Interrupted, but still waiting. Last fed at #{time.hour}:#{time.minute}"
     clear_interrupt_status
     {:noreply, state}
   end
 
   def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :idle} ) do
-    hour = Timex.DateTime.now("America/New_York").hour
-    if hour in @active_hours do
+    time = Timex.DateTime.now("America/New_York")
+    if time.hour in @active_hours do
       Logger.debug "FEED THE CAT!"
+      PersistentStorage.put last_fed_at: time
       # turn the motor
       pid = Process.whereis( StepperTurner )
       Process.send(pid, :bump, [])
