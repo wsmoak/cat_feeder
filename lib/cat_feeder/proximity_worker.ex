@@ -6,7 +6,7 @@ defmodule CatFeeder.ProximityWorker do
 @ active_hours 0..23
 
 # wait in minutes * seconds * milliseconds
-  @wait           1200000
+  @wait           900000 # 15 min * 60 sec * 1000 ms
 
 # register        address
   @cmd            0x80
