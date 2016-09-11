@@ -3,9 +3,8 @@ defmodule CatFeeder.ProximityWorker do
   use GenServer
 
 # Always on while sorting out WiFi with Nerves
-@ active_hours 0..23
+  @active_hours 8..19 # 8am to 7:59pm
 
-# wait in minutes * seconds * milliseconds
   @wait           900000 # 15 min * 60 sec * 1000 ms
 
 # register        address
