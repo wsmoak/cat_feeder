@@ -11,3 +11,16 @@ The proximity sensor is a VCNL4010 from Adafruit
 The stepper motor is controlled by a PCA9685 (among other things) on the Adafruit Stepper Motor HAT
 <https://www.adafruit.com/products/2348>
 <http://www.adafruit.com/datasheets/PCA9685.pdf>
+
+Initially:
+  * Install dependencies with `mix deps.get`
+  * Create firmware with `mix firmware`
+  * Burn to an SD card with `mix firmware.burn`
+
+Subsequently:
+  * Create firmware with `mix firmware`
+  * Burn to an SD card with `mix firmware.burn --task upgrade` to avoid overwriting the appdata partition
+
+To set the time:
+
+Connect a monitor and keyboard to the RPi. After it boots, hit enter to get an iex prompt if one is not visible.  Enter `System.cmd("date",["MMDDHHMMYYYY"])` for the current time in UTC.
