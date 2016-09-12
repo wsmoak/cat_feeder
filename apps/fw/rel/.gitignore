@@ -1,1 +1,3 @@
-cat_feeder
+*
+!vm.args
+!.gitignore
