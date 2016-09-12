@@ -50,7 +50,7 @@ defmodule CatFeeder.Mixfile do
     [
       {:elixir_ale, "~> 0.4.1"},
       {:exrm, "~> 1.0.5"},
-      {:timex, "~> 2.1.4"},
+      {:timex, "~> 3.0"},
       {:nerves, "~> 0.3"},
       {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"}
     ]

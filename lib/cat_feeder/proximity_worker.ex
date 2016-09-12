@@ -1,9 +1,11 @@
 defmodule CatFeeder.ProximityWorker do
   require Logger
   use GenServer
+  use Timex
 
 # Always on while sorting out WiFi with Nerves
   @active_hours 8..19 # 8am to 7:59pm
+  @timezone "America/New_York"
 
   @wait           900000 # 15 min * 60 sec * 1000 ms
 
@@ -70,13 +72,14 @@ defmodule CatFeeder.ProximityWorker do
 
   def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :waiting}) do
     time = PersistentStorage.get :last_fed_at
-    Logger.debug "Interrupted, but still waiting. Last fed at #{time.hour}:#{time.minute}"
+    display_time = Timex.format!(time, "{h12}:{m}")
+    Logger.debug "Interrupted, but still waiting. Last fed at #{display_time}"
     clear_interrupt_status
     {:noreply, state}
   end
 
   def handle_info({:gpio_interrupt, _pin, :falling}, state = %{status: :idle} ) do
-    time = Timex.DateTime.now("America/New_York")
+    time = Timex.now(@timezone)
     if time.hour in @active_hours do
       Logger.debug "FEED THE CAT!"
       PersistentStorage.put last_fed_at: time
