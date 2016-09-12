@@ -25,7 +25,6 @@ defmodule CatFeeder.Mixfile do
       :elixir_ale,
       :timex,
       :nerves,
-      :httpoison,
       :nerves_system_br,
       :porcelain,
       :persistent_storage,
