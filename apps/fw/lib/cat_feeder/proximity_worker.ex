@@ -53,8 +53,10 @@ defmodule CatFeeder.ProximityWorker do
     int_pid = Process.whereis( InterruptPin )
     Gpio.set_int(int_pid, :falling)
 
-    # set the initial state
-    {:ok, %{:status => :idle}}
+    # By default, elixir_ale will send an initial message about the state of the interrupt pin, and we need to ignore it.  See below.
+
+    # set the initial state.
+    {:ok, %{:status => :starting}}
   end
 
   def terminate(reason, _state) do
@@ -95,6 +97,11 @@ defmodule CatFeeder.ProximityWorker do
       clear_interrupt_status
       {:noreply, state}
     end
+  end
+
+  def handle_info({:gpio_interrupt, _pin, :rising}, state = %{status: :starting} ) do
+    # This is the initial message from the interrupt pin, after which we switch to the :idle state
+    {:noreply, Map.update!(state, :status, fn _old_state -> :idle end) }
   end
 
   def handle_info(msg, state) do
