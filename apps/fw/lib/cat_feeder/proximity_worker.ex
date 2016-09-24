@@ -49,11 +49,13 @@ defmodule CatFeeder.ProximityWorker do
     # configure the chip to interrupt when threshold is exceeded
     I2c.write(pid, <<@int_ctrl, 0x02 >>)  # 0000 0010
 
-    # tell elixir_ale we're looking for the pin to be pulled low
     int_pid = Process.whereis( InterruptPin )
-    Gpio.set_int(int_pid, :falling)
+    # tell gpio_rpi that the pin needs to be pulled up by default
+    GpioRpi.set_mode(int_pid, :up)
+    # ... and that we want an interrupt when it goes low
+    GpioRpi.set_int(int_pid, :falling)
 
-    # By default, elixir_ale will send an initial message about the state of the interrupt pin, and we need to ignore it.  See below.
+    # By default, elixir_ale/gpio_rpi will send an initial message about the state of the interrupt pin, and we need to ignore it.  See below.
 
     # set the initial state.
     {:ok, %{:status => :starting}}
