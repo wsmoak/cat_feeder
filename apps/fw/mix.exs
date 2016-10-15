@@ -32,7 +32,7 @@ defmodule CatFeeder.Mixfile do
       :nerves_toolchain,
       :nerves_system,
       :nerves_toolchain_arm_unknown_linux_gnueabihf,
-      :nerves_system_rpi2,
+      :nerves_system_rpi3,
       :nerves_interim_wifi,
       ],
      mod: {CatFeeder, []}]
