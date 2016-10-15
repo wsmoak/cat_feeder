@@ -7,7 +7,7 @@ defmodule CatFeeder.Mixfile do
     [app: :cat_feeder,
      version: "0.0.1",
      target: @target,
-     archives: [nerves_bootstrap: "~> 0.2"],
+     archives: [nerves_bootstrap: "~> 0.1"],
      deps_path: "deps/#{@target}",
      build_path: "_build/#{@target}",
      build_embedded: Mix.env == :prod,
@@ -51,11 +51,12 @@ defmodule CatFeeder.Mixfile do
     [
       {:elixir_ale, "~> 0.4.1"},
       {:exrm, "~> 1.0.5"},
-      {:timex, "~> 3.0"},
+      {:timex, "3.0.8"},
       {:nerves, "~> 0.3"},
       {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"},
       {:gpio_rpi, git: "https://github.com/Hermanverschooten/gpio_rpi.git", branch: "master"},
-      {:nerves_interim_wifi, git: "https://github.com/nerves-project/nerves_interim_wifi", branch: "master"}
+      {:nerves_interim_wifi, "~> 0.0.2"},
+      {:nerves_system, "0.1.5"},
     ]
   end
 

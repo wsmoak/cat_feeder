@@ -15,10 +15,8 @@ defmodule CatFeeder do
       worker(CatFeeder.ProximityWorker, []),
       worker(I2c, ["i2c-1", 0x60, [name: Stepper]], id: "step"),
       worker(CatFeeder.StepperWorker, []),
+      worker(CatFeeder.WifiWorker, []),
     ]
-
-    opts = Application.get_env(:cat_feeder, :wlan0)
-    Nerves.InterimWiFi.setup "wlan0", opts
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

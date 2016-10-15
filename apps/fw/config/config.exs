@@ -21,8 +21,8 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
-config :nerves_interim_wifi,
-  regulatory_domain: "US"
+#config :nerves_interim_wifi,
+#  regulatory_domain: "US"
 
 ssid = System.get_env("SSID") || raise "Set the SSID env var!"
 psk = System.get_env("PSK") || raise "Set the PSK env var!"
