@@ -22,18 +22,12 @@ defmodule CatFeeder.Mixfile do
   def application do
     [applications: [
       :logger,
+      :nerves_interim_wifi,
       :elixir_ale,
       :gpio_rpi,
       :timex,
-      :nerves,
-      :nerves_system_br,
       :porcelain,
       :persistent_storage,
-      :nerves_toolchain,
-      :nerves_system,
-      :nerves_toolchain_arm_unknown_linux_gnueabihf,
-      :nerves_system_rpi3,
-      :nerves_interim_wifi,
       ],
      mod: {CatFeeder, []}]
   end
