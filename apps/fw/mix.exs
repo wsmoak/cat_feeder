@@ -1,13 +1,13 @@
 defmodule CatFeeder.Mixfile do
   use Mix.Project
 
-  @target System.get_env("NERVES_TARGET") || "rpi2"
+  @target System.get_env("NERVES_TARGET") || "rpi3"
 
   def project do
     [app: :cat_feeder,
      version: "0.0.1",
      target: @target,
-     archives: [nerves_bootstrap: "0.1.4"],
+     archives: [nerves_bootstrap: "~> 0.2"],
      deps_path: "deps/#{@target}",
      build_path: "_build/#{@target}",
      build_embedded: Mix.env == :prod,
