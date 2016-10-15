@@ -1,5 +1,6 @@
 defmodule CatFeeder do
   use Application
+  require Logger
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -16,7 +17,10 @@ defmodule CatFeeder do
       worker(CatFeeder.StepperWorker, []),
     ]
 
-    # {:ok, _} = Nerves.IO.Ethernet.setup :eth0
+    ssid = Application.get_env(:cat_feeder, :ssid)
+    psk = Application.get_env(:cat_feeder, :psk)
+    {:ok, answer} = Nerves.InterimWiFi.setup "wlan0", ssid: ssid, key_mgmt: :"WPA-PSK", psk: psk
+    # Logger.debug answer
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

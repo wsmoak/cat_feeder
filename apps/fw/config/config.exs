@@ -21,6 +21,18 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
+config :nerves_interim_wifi,
+  regulatory_domain: "US"
+
+ssid = System.get_env("SSID") || raise "Set the SSID env var!"
+psk = System.get_env("PSK") || raise "Set the PSK env var!"
+
+# Change these options to your
+config :cat_feeder, :wlan0,
+  ssid: ssid,
+  key_mgmt: :"WPA-PSK",
+  psk: psk
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.

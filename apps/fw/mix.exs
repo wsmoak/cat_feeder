@@ -33,6 +33,7 @@ defmodule CatFeeder.Mixfile do
       :nerves_system,
       :nerves_toolchain_arm_unknown_linux_gnueabihf,
       :nerves_system_rpi2,
+      :nerves_interim_wifi,
       ],
      mod: {CatFeeder, []}]
   end
@@ -54,6 +55,7 @@ defmodule CatFeeder.Mixfile do
       {:nerves, "~> 0.3"},
       {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"},
       {:gpio_rpi, git: "https://github.com/Hermanverschooten/gpio_rpi.git", branch: "master"},
+      {:nerves_interim_wifi, git: "https://github.com/nerves-project/nerves_interim_wifi", branch: "master"}
     ]
   end
 
