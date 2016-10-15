@@ -17,10 +17,8 @@ defmodule CatFeeder do
       worker(CatFeeder.StepperWorker, []),
     ]
 
-    ssid = Application.get_env(:cat_feeder, :ssid)
-    psk = Application.get_env(:cat_feeder, :psk)
-    {:ok, answer} = Nerves.InterimWiFi.setup "wlan0", ssid: ssid, key_mgmt: :"WPA-PSK", psk: psk
-    # Logger.debug answer
+    opts = Application.get_env(:cat_feeder, :wlan0)
+    Nerves.InterimWiFi.setup "wlan0", opts
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
