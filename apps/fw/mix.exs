@@ -26,7 +26,6 @@ defmodule CatFeeder.Mixfile do
       :elixir_ale,
       :gpio_rpi,
       :timex,
-      :porcelain,
       :persistent_storage,
       ],
      mod: {CatFeeder, []}]
@@ -50,7 +49,6 @@ defmodule CatFeeder.Mixfile do
       {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"},
       {:gpio_rpi, git: "https://github.com/Hermanverschooten/gpio_rpi.git", branch: "master"},
       {:nerves_interim_wifi, "~> 0.0.2"},
-      {:nerves_system, "0.1.5"},
     ]
   end
 
