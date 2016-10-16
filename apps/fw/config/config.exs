@@ -33,6 +33,15 @@ config :cat_feeder, :wlan0,
   key_mgmt: :"WPA-PSK",
   psk: psk
 
+config :cat_feeder_web, CatFeederWeb.Endpoint,
+  http: [port: 80],
+  url: [host: "localhost", port: 80],
+  secret_key_base: "abc-123-def-456",
+  root: Path.dirname(__DIR__),
+  server: true,
+  render_errors: [accepts: ~w(html json)],
+  pubsub: [name: Nerves.PubSub]
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
