@@ -23,7 +23,6 @@
   "nerves_toolchain_arm_unknown_linux_gnueabihf": {:hex, :nerves_toolchain_arm_unknown_linux_gnueabihf, "0.6.1", "d2094bdaff79b13a259290363174e4a90079848a951a7b8cbfee2bd2c653fce5", [:mix], [{:nerves_toolchain, "~> 0.6.2", [hex: :nerves_toolchain, optional: false]}]},
   "nerves_wpa_supplicant": {:hex, :nerves_wpa_supplicant, "0.2.2", "da829baec94a8afa7da3a6beaaf1725b9ca7f5f58779ba50b73568b7d37d3d98", [:mix, :make], [{:elixir_make, "~> 0.3", [hex: :elixir_make, optional: false]}]},
   "persistent_storage": {:git, "https://github.com/cellulose/persistent_storage.git", "25e170286a45701c4784caf337d9908c34a71b3e", [branch: "master"]},
-  "porcelain": {:hex, :porcelain, "2.0.2", "c1d4863de3e391195e36457bb3d7e17ee1bca5a44f1d708bc037c313342f58e9", [:mix], []},
   "providers": {:hex, :providers, "1.6.0", "db0e2f9043ae60c0155205fcd238d68516331d0e5146155e33d1e79dc452964a", [:rebar3], [{:getopt, "0.8.2", [hex: :getopt, optional: false]}]},
   "relx": {:hex, :relx, "3.21.1", "f989dc520730efd9075e9f4debcb8ba1d7d1e86b018b0bcf45a2eb80270b4ad6", [:rebar3], [{:bbmustache, "1.0.4", [hex: :bbmustache, optional: false]}, {:cf, "0.2.1", [hex: :cf, optional: false]}, {:erlware_commons, "0.21.0", [hex: :erlware_commons, optional: false]}, {:getopt, "0.8.2", [hex: :getopt, optional: false]}, {:providers, "1.6.0", [hex: :providers, optional: false]}]},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0", "edee20847c42e379bf91261db474ffbe373f8acb56e9079acb6038d4e0bf414f", [:rebar, :make], []},
