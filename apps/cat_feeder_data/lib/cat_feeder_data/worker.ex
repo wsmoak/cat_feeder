@@ -10,11 +10,13 @@ defmodule CatFeederData.Worker do
     GenServer.start_link(__MODULE__, [], name: DataWorker)
   end
 
-  def get_last_fed_at(pid) do
+  def get_last_fed_at do
+    pid = Process.whereis( DataWorker )
     GenServer.call(pid, :get_last_fed_at)
   end
 
-  def set_last_fed_at(pid, time) do
+  def set_last_fed_at(time) do
+    pid = Process.whereis( DataWorker )
     GenServer.cast(pid, {:set_last_fed_at,time})
   end
 
