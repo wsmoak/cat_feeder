@@ -11,7 +11,7 @@ defmodule CatFeederData.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps()]
   end
 
   # Configuration for the OTP application
@@ -38,6 +38,7 @@ defmodule CatFeederData.Mixfile do
   defp deps do
     [
       {:persistent_storage, git: "https://github.com/cellulose/persistent_storage.git", branch: "master"},
+      {:timex, "3.0.8", only: :test},
     ]
   end
 end
