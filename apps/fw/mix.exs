@@ -8,8 +8,10 @@ defmodule CatFeeder.Mixfile do
      version: "0.0.1",
      target: @target,
      archives: [nerves_bootstrap: "~> 0.1"],
-     deps_path: "deps/#{@target}",
-     build_path: "_build/#{@target}",
+     build_path: "../../_build/#{@target}",
+     config_path: "../../config/config.exs",
+     deps_path: "../../deps/#{@target}",
+     lockfile: "../../mix.lock",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
@@ -28,6 +30,7 @@ defmodule CatFeeder.Mixfile do
       :timex,
       :persistent_storage,
       :cat_feeder_web,
+      :cat_feeder_data,
       ],
      mod: {CatFeeder, []}]
   end
@@ -51,6 +54,7 @@ defmodule CatFeeder.Mixfile do
       {:gpio_rpi, git: "https://github.com/Hermanverschooten/gpio_rpi.git", branch: "master"},
       {:nerves_interim_wifi, "~> 0.0.2"},
       {:cat_feeder_web, in_umbrella: true},
+      {:cat_feeder_data, in_umbrella: true},
     ]
   end
 
