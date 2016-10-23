@@ -16,6 +16,7 @@ defmodule CatFeeder do
       worker(I2c, ["i2c-1", 0x60, [name: Stepper]], id: "step"),
       worker(CatFeeder.StepperWorker, []),
       worker(CatFeeder.WifiWorker, []),
+      worker(CatFeeder.DateTimeWorker,[]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
