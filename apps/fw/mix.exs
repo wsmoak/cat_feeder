@@ -12,6 +12,7 @@ defmodule CatFeeder.Mixfile do
      config_path: "../../config/config.exs",
      deps_path: "../../deps/#{@target}",
      lockfile: "../../mix.lock",
+     preferred_cli_env: [firmware: :prod, "firmware.burn": :prod],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
