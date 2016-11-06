@@ -11,6 +11,8 @@ defmodule CatFeeder do
       # Define workers and child supervisors to be supervised
       # worker(CatFeeder.Worker, [arg1, arg2, arg3]),
       worker(I2c, ["i2c-1", 0x13, [name: ProximitySensor]], id: "prox"),
+      # TODO: Update GpioRpi and use new syntax, removing unneeded lines in ProximityWorker
+      # worker(GpioRpi, [18, :input, [mode: :up, interrupt: :falling, name: InterruptPin]]),
       worker(GpioRpi, [18, :input, [name: InterruptPin]]),
       worker(CatFeeder.ProximityWorker, []),
       worker(I2c, ["i2c-1", 0x60, [name: Stepper]], id: "step"),
