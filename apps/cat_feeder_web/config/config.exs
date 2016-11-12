@@ -14,9 +14,10 @@ config :cat_feeder_web, CatFeederWeb.Endpoint,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+# I think this changed the logs on the firmware,
+#config :logger, :console,
+#  format: "$time $metadata[$level] $message\n",
+#  metadata: [:request_id]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

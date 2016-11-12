@@ -27,7 +27,6 @@ use Mix.Config
 ssid = System.get_env("SSID") || raise "Set the SSID env var!"
 psk = System.get_env("PSK") || raise "Set the PSK env var!"
 
-# Change these options to your
 config :cat_feeder, :wlan0,
   ssid: ssid,
   key_mgmt: :"WPA-PSK",
