@@ -3,8 +3,7 @@ defmodule CatFeeder.ProximityWorker do
   use GenServer
   use Timex
 
-# Always on while sorting out WiFi with Nerves
-  @active_hours 8..19 # 8am to 7:59pm
+  @active_hours 10..18 # 10am to 6:59pm
   @timezone "America/New_York"
 
   @wait           900000 # 15 min * 60 sec * 1000 ms
